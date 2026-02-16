@@ -517,6 +517,8 @@ bool GroupMatcher::addMatcher(Matcher &Candidate) {
 }
 
 void GroupMatcher::finalize() {
+  return; // Early return to disable hoisting
+
   assert(Conditions.empty() && "Already finalized?");
   if (empty())
     return;

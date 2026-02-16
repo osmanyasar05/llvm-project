@@ -1871,6 +1871,14 @@ shl_of_vscale,
 sub_of_vscale,
 ]>;
 
+// fold ((A+(B+C))-B) -> A+C
+def APlusBPlusCMinusB : GICombineRule<
+   (defs root:$root),
+   (match (G_ADD $add1, $B, $C),
+          (G_ADD $add2, $A, $add1),
+          (G_SUB $root, $add2, $B)),
+   (apply (G_ADD $root, $A, $C))>;
+
 // fold ((A+(B-C))-B) -> A-C
 def APlusBMinusCMinusB : GICombineRule<
    (defs root:$root),
@@ -1998,6 +2006,7 @@ def AMinusC1PlusC2: GICombineRule<
    (apply [{ Helper.applyBuildFn(*${root}, ${matchinfo}); }])>;
 
 def integer_reassoc_combines: GICombineGroup<[
+  APlusBPlusCMinusB,
   APlusBMinusCMinusB,
   AMinusBMinusCMinusC,
   ZeroMinusAPlusB,
